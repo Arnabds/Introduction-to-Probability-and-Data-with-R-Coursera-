@@ -408,6 +408,8 @@ creating a new variable with the `mutate` function.
 ```{r dep-type}
 nycflights <- nycflights %>%
   mutate(dep_type = ifelse(dep_delay < 5, "on time", "delayed"))
+nycflights %>%
+select()
 ```
 
 The first argument in the `mutate` function is the name of the new variable
@@ -421,7 +423,7 @@ version of this data frame that includes the new `dep_type` variable.
 We can handle all the remaining steps in one code chunk:
 
 ```{r}
-nycflights %>%
+df=nycflights %>%
   group_by(origin) %>%
   summarise(ot_dep_rate = sum(dep_type == "on time") / n()) %>%
   arrange(desc(ot_dep_rate))
@@ -434,12 +436,12 @@ which NYC airport would you choose to fly out of?
 <ol>
 <li> EWR </li> 
 <li> JFK </li> 
-<li> LGA </li> 
+<li> LGA </li> (Correct)
 </ol>
 
 ```{r on-time-dep-perc-airport}
 # type your code for Question 7 here, and Knit
-
+df$ot_dep_rate*100
 ```
 
 We can also visualize the distribution of on on time departure rate across 
@@ -459,7 +461,7 @@ can be calculated as distance divided by number of hours of travel, and note tha
 pipe to select just these two variables with `select(avg_speed, tailnum)`. You can 
 Google this tail number to find out more about the aircraft. 
 <ol>
-<li> N666DN </li> 
+<li> N666DN </li> (Correct)
 <li> N755US </li> 
 <li> N779JB </li> 
 <li> N947UW </li> 
@@ -468,6 +470,11 @@ Google this tail number to find out more about the aircraft.
 
 ```{r fastest-avg-speed-tailnum}
 # type your code for Question 8 here, and Knit
+df8=nycflights %>%
+  mutate(avg_speed=distance/air_time * 60) 
+df8 %>%
+  select(avg_speed, tailnum)%>%
+arrange(desc(avg_speed))
 
 ```
 
@@ -477,13 +484,14 @@ about the relationship between average speed and distance.
 <ol>
 <li> As distance increases the average speed of flights decreases. </li> 
 <li> The relationship is linear. </li> 
-<li> There is an overall postive association between distance and average speed.</li> 
+<li> There is an overall postive association between distance and average speed.</li> (Correct)
 <li> There are no outliers. </li> 
 <li> The distribution of distances are uniform over 0 to 5000 miles. </li> 
 </ol>
 
 ```{r avg-speed-dist-scatter}
 # type your code for Question 9 here, and Knit
+plot(df8$distance, df8$avg_speed )
 
 ```
 
@@ -498,5 +506,12 @@ were `"delayed"` departing arrive `"on time"`?
 
 ```{r on-time-arr-perc}
 # type your code for Question 10 here, and Knit
-
+nycflights <- nycflights %>%
+  mutate(arr_type = ifelse(arr_delay <=0, "on time", "delayed"))
+df100=nycflights %>%
+  filter(dep_type=="delayed" & arr_type=="on time") 
+df101=nycflights %>%
+  filter(dep_type=="delayed") 
+prop=nrow(df100)/nrow(df101)
+prop
 ```
